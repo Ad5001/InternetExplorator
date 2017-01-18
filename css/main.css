@@ -1,0 +1,31 @@
+div#game {
+    background-image: url(../images/UI/Top.png);
+    background-repeat: no-repeat;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    color: white;
+    font-family: Arial;
+    font-size: 14px;
+}
+
+.urlbar {
+    position: absolute;
+    top: 93px;
+    background: transparent;
+    border: none;
+}
+
+input.urlbar {
+    width: 590px;
+    left: 70px;
+    padding-left: 5px;
+}
+
+select.urlbar {
+    width: 20px;
+    opacity: 0;
+    left: 668px;
+}
