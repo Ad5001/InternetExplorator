@@ -16,6 +16,12 @@ window.onload = function() {
     }, function() {
 
 
+        Crafty.redirectToURL = function(url) {
+            document.getElementById("page").value = url;
+            Crafty.trigger("UpdateContent");
+        }
+
+
         window.troll_pages = [{
                 "url": "firefox.com",
                 "Title": "Firefox - Download",
@@ -35,36 +41,13 @@ window.onload = function() {
         ]
 
 
-        window.pages = {
-            "bing.com": {
-                title: "Bing research",
-                icon: "images/icons/404.png",
-                action: function() {
-                    window.ui.contener.image("images/screens/Bing.png")
-                },
-                leave: function() {}
-            },
-            "about:startup": {
-                title: "New page",
-                icon: "images/icons/404.png",
-                action: function() {
-                    window.ui.contener.image("images/screens/StartupPage.png");
-                    window.ui.outlookBrand.css("display", "block")
-                },
-                leave: function() {
-                    window.ui.outlookBrand.css("display", "none");
-                }
-            },
-            "google.com": {
-                title: "Google",
-                icon: "images/icons/404.png",
-                action: function() {
-                    document.getElementById("page").value = "bing.com";
-                    Crafty.trigger("UpdateContent");
-                },
-                leave: function() {}
-            },
-        }
+        window.pages = {};
+
+
+        new Page("Bing research", "bing.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Bing.png") }, function() {});
+        new Page("New page", "about:startup", "images/icons/404.png", function() { window.ui.contener.image("images/screens/StartupPage.png"); }, function() {});
+        new Page("Google", "google.com", "images/icons/404.png", function() { Crafty.redirectToURL("bing.com") }, function() {});
+        new Page("Outlook", "outlook.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook.png"); }, function() {});
 
 
         window.ui = {}
@@ -83,7 +66,7 @@ window.onload = function() {
                     setTimeout(function() {
                         page = document.getElementById("page").value;
                         typeof window.pages[page] !== "undefined" ? infos = window.pages[page] : { "title": "404 Not found", "icon": "images/icons/404.png", "action": function() { window.ui.contener.image("images/screens/404.png") } };
-                        infos.action();
+                        infos.enter();
                         window.ui.title.text(infos.title);
                         window.ui.contener.css("display", "block")
                         window.ui.loading.css("display", "none");
@@ -97,15 +80,14 @@ window.onload = function() {
 
         window.ui.pageinput = Crafty.e("HTML") // Page input
             .append("<input type='text' id='page' class='urlbar' onkeyup='if(event.which == 13) {Crafty.trigger(\"UpdateContent\");}' />" +
-                "<select class='urlbar' onmouseout='this.style.left = \"668px\";this.style.width = \"10px\";' onclick='this.style.left = \"90px\";this.style.width = \"590px\";' onchange='document.getElementById(\"page\").value=this.value;this.value=\"\";Crafty.trigger(\"UpdateContent\");'><option value='about:startup'></option><option value='outlook.com'>Outlook</option></select>");
+                "<select class='urlbar' onmouseout='this.style.left = \"668px\";this.style.width = \"10px\";' onclick='this.style.left = \"90px\";this.style.width = \"590px\";' onchange='Crafty.redirectToURL(this.value);this.value=\"\";'><option value='about:startup'></option><option value='outlook.com'>Outlook</option></select>");
 
-        window.ui.outlookBrand = Crafty.e('2D, DOM, Image, Mouse') // Outlook link
+        window.pages["about:startup"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Outlook link
             .attr({ x: 54, y: 318, w: 118, h: 116 })
             .image("images/UI/OutlookBrand.png")
             .bind('Click', function(ev) {
-                document.getElementById("page").value = "outlook.com";
-                Crafty.trigger("UpdateContent");
-            });
+                Crafty.redirectToURL("outlook.com");
+            }));
 
         window.ui.loading = Crafty.e('2D, DOM, Image') // Loading gif
             .attr({ x: 180, y: 120, w: 441, h: 291 })
@@ -137,7 +119,7 @@ window.onload = function() {
                 Crafty.trigger("UpdateContent");
             });
 
-        window.ui.title = Crafty.e('2D, DOM, Text') // Loading the home button
+        window.ui.title = Crafty.e('2D, DOM, Text') // Loading the Title
             .attr({ x: 23, y: 8, w: 103 })
             .text("New page")
 
