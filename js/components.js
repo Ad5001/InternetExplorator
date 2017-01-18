@@ -3,8 +3,8 @@ Crafty.c("User", {
     init: function() {
         this.w = 70;
         this.h = 70;
-        this.page = window.troll_pages[Math.floor(Math.random() * window.troll_pages.length)];
-        this.bind("EnterFrame", this.enterframe());
+        page: window.troll_pages[Math.floor(Math.random() * window.troll_pages.length)],
+            this.bind("EnterFrame", this.enterframe());
         this.title = Crafty.e('2D, DOM, Text')
             .attr({
                 x: this.x + this.w + 10,
@@ -30,55 +30,55 @@ Crafty.c("Action", {
 });
 
 
-class Page {
-    constructor(title, url, icon, action, leave) {
-        this.title = title;
-        this.url = url;
-        this.icon = icon;
-        this._action = action;
-        this._leave = leave;
-        this.elements = [];
-        window.pages[this.url] = this;
-    }
+Page = function(title, url, icon, action, leave) {
+    hash = {
+        title: title,
+        url: url,
+        icon: icon,
+        _action: action,
+        _leave: leave,
+        elements: [],
 
-    addEntity(entity) {
-        entity.css("display", "none");
-        this.elements[entity.getId()] = entity;
-        return this;
-    }
+        addEntity: function(entity) {
+            entity.css("display", "none");
+            this.elements[entity.getId()] = entity;
+            return this;
+        },
 
-    removeEntity(id) {
-        this.elements[id] = undefined;
-        return this;
-    }
+        removeEntity: function(id) {
+            this.elements[id] = undefined;
+            return this;
+        },
 
-    getEntities() {
-        return this.elements;
-    }
+        getEntities: function() {
+            return this.elements;
+        },
 
-    getEntity(id) {
-        return this.elements[id];
-    }
+        getEntity: function(id) {
+            return this.elements[id];
+        },
 
-    getName() { return this.name; }
+        getName: function() { return this.name; },
 
-    getTitle() { return this.title; }
+        getTitle: function() { return this.title; },
 
-    getUrl() { return this.url; }
+        getUrl: function() { return this.url; },
 
-    getIcon() { return this.icon; }
+        getIcon: function() { return this.icon; },
 
-    enter() {
-        this._action();
-        this.elements.forEach(function(ele) {
-            ele.css("display", "block")
-        })
-    }
+        enter: function() {
+            this._action();
+            this.elements.forEach(function(ele) {
+                ele.css("display", "block")
+            })
+        },
 
-    leave() {
-        this._action();
-        this.elements.forEach(function(ele) {
-            ele.css("display", "none")
-        })
-    }
+        leave: function() {
+            this._action();
+            this.elements.forEach(function(ele) {
+                ele.css("display", "none")
+            })
+        }
+    };
+    window.pages[url] = hash;
 }
