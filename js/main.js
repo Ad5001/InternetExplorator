@@ -9,11 +9,39 @@ window.onload = function() {
 
     Crafty.load({ // Loading images
         "images": [
-            "images/UI/back.png", "images/UI/Loading.gif", "images/UI/OutlookBrand.png", // UI
-            "images/sreens/StartupPage.png", "images/sreens/Bing.png", // Pages
+            "images/UI/back.png", "images/UI/Loading.gif", "images/UI/AboutStartup/OutlookBrand.png", "images/UI/Outlook/mail1.png", "images/UI/Go.png", "images/UI/Home.png", "images/UI/Close.png", // UI
+            "images/screens/StartupPage.png", "images/screens/Bing.png", "images/screens/404.png", "images/screens/Outlook/1.png", // Pages
             "images/alerts/StartupMsg.png"
         ]
     }, function() {
+
+        window.ui = {}
+        window.alerts = {}
+
+        window.ui.contener = Crafty.e('2D, DOM, Image') // Page content
+            .attr({ x: 0, y: 118, w: 797, h: 317, oldPage: "about:startup" })
+            .image("images/screens/StartupPage.png")
+            .bind("UpdateContent", function() {
+                page = document.getElementById("page").value;
+                if (page !== window.ui.contener.oldPage) {
+                    window.ui.contener.css("display", "none");
+                    window.pages[window.ui.contener.oldPage].leave();
+                    window.ui.loading.css("display", "block")
+                    setTimeout(function() {
+                        page = document.getElementById("page").value;
+                        console.log(window.pages[page]);
+                        if (window.pages[page] == undefined) {
+                            page = "404";
+                        }
+                        infos = window.pages[page];
+                        infos.enter();
+                        window.ui.title.text(infos.title);
+                        window.ui.contener.css("display", "block")
+                        window.ui.loading.css("display", "none");
+                        window.ui.contener.oldPage = page;
+                    }, 5000)
+                }
+            });
 
 
         Crafty.redirectToURL = function(url) {
@@ -43,58 +71,51 @@ window.onload = function() {
 
         window.pages = {};
 
-
+        // Registering pages...
         new Page("Bing research", "bing.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Bing.png") }, function() {});
         new Page("New page", "about:startup", "images/icons/404.png", function() { window.ui.contener.image("images/screens/StartupPage.png"); }, function() {});
         new Page("Google", "google.com", "images/icons/404.png", function() { Crafty.redirectToURL("bing.com") }, function() {});
-        new Page("Outlook", "outlook.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook.png"); }, function() {});
+        new Page("Outlook Mail", "outlook.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/1.png"); }, function() {});
+        new Page("You've been hired! - Outlook Mail", "outlook.com/mail/ThisIsTheBestMailMessageUrlEver", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/2.png"); }, function() {});
+        new Page("404 NOT FOUND", "404", "images/icons/404.png", function() { window.ui.contener.image("images/screens/404.png"); }, function() {});
 
+        // Registering pages elements.
+        window.pages["about:startup"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Outlook link
+            .attr({ x: 54, y: 318, w: 118, h: 116 })
+            .image("images/UI/AboutStartup/OutlookBrand.png")
+            .bind('Click', function(ev) {
+                Crafty.redirectToURL("outlook.com");
+            }));
 
-        window.ui = {}
-        window.alerts = {}
+        window.pages["outlook.com"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Mail link
+            .attr({ x: 251, y: 257, w: 467, h: 31 })
+            .image("images/UI/Outlook/mail1.png")
+            .bind('Click', function(ev) {
+                Crafty.redirectToURL("outlook.com/mail/ThisIsTheBestMailMessageUrlEver");
+            }));
 
+        window.pages["outlook.com/mail/ThisIsTheBestMailMessageUrlEver"].addEntity(Crafty.e('2D, DOM, Mouse, HTML') // Loading the Link
+            .attr({ x: 211, y: 379, w: 300 })
+            .append("misrcoft.com/work-online/errorer")
+            .bind('MouseUp', function(ev) {
+                Crafty.redirectToURL("misrcoft.com/work-online/errorer");
+            })
+            .css({ color: "blue", "font": "10px DengXian", "-ms-user-select": "all", "user-select": "all" }));
 
-        window.ui.contener = Crafty.e('2D, DOM, Image') // Page content
-            .attr({ x: 0, y: 118, w: 797, h: 317, oldPage: "about:startup" })
-            .image("images/screens/StartupPage.png")
-            .bind("UpdateContent", function() {
-                page = document.getElementById("page").value;
-                if (page !== window.ui.contener.oldPage) {
-                    window.ui.contener.css("display", "none");
-                    window.pages[window.ui.contener.oldPage].leave();
-                    window.ui.loading.css("display", "block")
-                    setTimeout(function() {
-                        page = document.getElementById("page").value;
-                        typeof window.pages[page] !== "undefined" ? infos = window.pages[page] : { "title": "404 Not found", "icon": "images/icons/404.png", "action": function() { window.ui.contener.image("images/screens/404.png") } };
-                        infos.enter();
-                        window.ui.title.text(infos.title);
-                        window.ui.contener.css("display", "block")
-                        window.ui.loading.css("display", "none");
-                        window.ui.contener.oldPage = page;
-                    }, 5000)
-                }
-            });
 
 
 
 
         window.ui.pageinput = Crafty.e("HTML") // Page input
             .append("<input type='text' id='page' class='urlbar' onkeyup='if(event.which == 13) {Crafty.trigger(\"UpdateContent\");}' />" +
-                "<select class='urlbar' onmouseout='this.style.left = \"668px\";this.style.width = \"10px\";' onclick='this.style.left = \"90px\";this.style.width = \"590px\";' onchange='Crafty.redirectToURL(this.value);this.value=\"\";'><option value='about:startup'></option><option value='outlook.com'>Outlook</option></select>");
-
-        window.pages["about:startup"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Outlook link
-            .attr({ x: 54, y: 318, w: 118, h: 116 })
-            .image("images/UI/OutlookBrand.png")
-            .bind('Click', function(ev) {
-                Crafty.redirectToURL("outlook.com");
-            }));
+                "<select class='urlbar' onchange='Crafty.redirectToURL(this.value);this.value=\"\";'><option value='about:startup'></option><option value='outlook.com'>Outlook</option></select>");
 
         window.ui.loading = Crafty.e('2D, DOM, Image') // Loading gif
             .attr({ x: 180, y: 120, w: 441, h: 291 })
             .image("images/UI/Loading.gif")
             .css("display", "none");
 
-        window.ui.back = Crafty.e('2D, DOM, Image, Mouser') // Loading back button
+        window.ui.back = Crafty.e('2D, DOM, Image, Mouse') // Loading back button
             .attr({ x: 8, y: 55, w: 79, h: 33 })
             .image("images/UI/back.png")
             .bind('Click', function(MouseEvent) {
@@ -122,6 +143,7 @@ window.onload = function() {
         window.ui.title = Crafty.e('2D, DOM, Text') // Loading the Title
             .attr({ x: 23, y: 8, w: 103 })
             .text("New page")
+            .css("font", "20px Arial")
 
 
 

@@ -16,16 +16,20 @@ body {
     top: 93px;
     background: transparent;
     border: none;
+    -ms-user-select: all;
+    user-select: all;
 }
 
 input.urlbar {
     width: 590px;
     left: 70px;
     padding-left: 5px;
+    z-index: 3;
 }
 
 select.urlbar {
-    width: 20px;
+    width: 630px;
     opacity: 0;
-    left: 668px;
+    left: 55px;
+    z-index: 2;
 }

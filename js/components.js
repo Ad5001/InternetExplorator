@@ -81,4 +81,5 @@ Page = function(title, url, icon, action, leave) {
         }
     };
     window.pages[url] = hash;
+    return hash;
 }
