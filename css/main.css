@@ -8,7 +8,8 @@ body {
     margin: 0px;
     color: white;
     font-family: Arial;
-    font-size: 20px;
+    font-size: 10px;
+    line-height: 1;
 }
 
 .urlbar {
@@ -18,6 +19,7 @@ body {
     border: none;
     -ms-user-select: all;
     user-select: all;
+    cursor: move;
 }
 
 input.urlbar {

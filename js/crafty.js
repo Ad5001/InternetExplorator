@@ -8,8 +8,18 @@
 
 
 (function e(t, n, r) {
-    function s(o, u) { if (!n[o]) { if (!t[o]) { var a = typeof require == "function" && require; if (!u && a) return a(o, !0); if (i) return i(o, !0); var f = new Error("Cannot find module '" + o + "'"); throw f.code = "MODULE_NOT_FOUND", f } var l = n[o] = { exports: {} };
-            t[o][0].call(l.exports, function(e) { var n = t[o][1][e]; return s(n ? n : e) }, l, l.exports, e, t, n, r) } return n[o].exports } var i = typeof require == "function" && require; for (var o = 0; o < r.length; o++) s(r[o]); return s })({
+    function s(o, u) {
+        if (!n[o]) {
+            if (!t[o]) { var a = typeof require == "function" && require; if (!u && a) return a(o, !0); if (i) return i(o, !0); var f = new Error("Cannot find module '" + o + "'"); throw f.code = "MODULE_NOT_FOUND", f }
+            var l = n[o] = { exports: {} };
+            t[o][0].call(l.exports, function(e) { var n = t[o][1][e]; return s(n ? n : e) }, l, l.exports, e, t, n, r)
+        }
+        return n[o].exports
+    }
+    var i = typeof require == "function" && require;
+    for (var o = 0; o < r.length; o++) s(r[o]);
+    return s
+})({
     1: [function(require, module, exports) {
         // shim for using process in browser
 
@@ -9203,7 +9213,7 @@
                             style = el.style;
 
                         style.color = this._textColor;
-                        style.font = font;
+                        // style.font = font;
                         el.innerHTML = this._text;
                     } else if (e.type === "canvas") {
                         var context = e.ctx;
@@ -9302,7 +9312,9 @@
 
             // Returns the font string to use
             _fontString: function() {
-                return this._textFont.type + ' ' + this._textFont.variant + ' ' + this._textFont.weight + ' ' + this._textFont.size + ' / ' + this._textFont.lineHeight + ' ' + this._textFont.family;
+                r = this._textFont.type + ' ' + this._textFont.variant + ' ' + this._textFont.weight + ' ' + this._textFont.size + '/' + this._textFont.lineHeight + ' ' + this._textFont.family;
+                Crafty.log(r);
+                return r;
             },
             /**@
              * #.textColor

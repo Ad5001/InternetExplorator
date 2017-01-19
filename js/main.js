@@ -29,10 +29,10 @@ window.onload = function() {
                     window.ui.loading.css("display", "block")
                     setTimeout(function() {
                         page = document.getElementById("page").value;
-                        console.log(window.pages[page]);
                         if (window.pages[page] == undefined) {
                             page = "404";
                         }
+                        console.log(window.pages[page].url);
                         infos = window.pages[page];
                         infos.enter();
                         window.ui.title.text(infos.title);
@@ -46,6 +46,7 @@ window.onload = function() {
 
         Crafty.redirectToURL = function(url) {
             document.getElementById("page").value = url;
+            location.hash = url;
             Crafty.trigger("UpdateContent");
         }
 
@@ -77,6 +78,7 @@ window.onload = function() {
         new Page("Google", "google.com", "images/icons/404.png", function() { Crafty.redirectToURL("bing.com") }, function() {});
         new Page("Outlook Mail", "outlook.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/1.png"); }, function() {});
         new Page("You've been hired! - Outlook Mail", "outlook.com/mail/ThisIsTheBestMailMessageUrlEver", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/2.png"); }, function() {});
+        new Page("Misrocoft - Work Online", "misrocoft.com/work-online/errorer", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Error/1.png"); }, function() {});
         new Page("404 NOT FOUND", "404", "images/icons/404.png", function() { window.ui.contener.image("images/screens/404.png"); }, function() {});
 
         // Registering pages elements.
@@ -97,10 +99,16 @@ window.onload = function() {
         window.pages["outlook.com/mail/ThisIsTheBestMailMessageUrlEver"].addEntity(Crafty.e('2D, DOM, Mouse, HTML') // Loading the Link
             .attr({ x: 211, y: 379, w: 300 })
             .append("misrcoft.com/work-online/errorer")
-            .bind('MouseUp', function(ev) {
+            .bind('Click', function(ev) {
                 Crafty.redirectToURL("misrcoft.com/work-online/errorer");
             })
             .css({ color: "blue", "font": "10px DengXian", "-ms-user-select": "all", "user-select": "all" }));
+
+
+
+        // Game UI Test
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 200 })) // Loading Test User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200, x: 200 })) // Loading Test Action
 
 
 
@@ -143,12 +151,19 @@ window.onload = function() {
         window.ui.title = Crafty.e('2D, DOM, Text') // Loading the Title
             .attr({ x: 23, y: 8, w: 103 })
             .text("New page")
-            .css("font", "20px Arial")
+            .css("font", "15px Arial")
+
+        window.game = { coins: 0 };
 
 
 
 
         window.loadingScreen.replace("");
+
+
+        if (location.hash.length > 1) {
+            Crafty.redirectToURL(location.hash.substr(1));
+        }
 
     });
 }
