@@ -29,6 +29,7 @@ Crafty.c("Action", {
         this.css("font-size", "13px");
         this.css("font-family", "DengXian");
         this.css("user-select", "none");
+        this.css("cursor", "move");
         users = Crafty("User");
         i = 0;
         while (users[i] !== undefined) {
@@ -65,7 +66,9 @@ Crafty.c("Draggable", {
         this.bind("Dragging", function(ev) {
             /*this.css("transform", "translate3d(" + ev.clientX + "px, " + ev.clientY + "px, 0px)");*/
             this.x = ev.clientX - (this.w / 2);
-            this.y = ev.clientY - (this.h / 2);
+            toY = ev.clientY - (this.h / 2);
+            if (toY < 118) toY = 118; // To not go out of the content page
+            this.y = toY;
         })
     }
 });

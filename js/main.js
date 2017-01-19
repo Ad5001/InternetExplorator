@@ -35,7 +35,7 @@ window.onload = function() {
                         console.log(window.pages[page].url);
                         infos = window.pages[page];
                         infos.enter();
-                        window.ui.title.text(infos.title);
+                        window.ui.title.text(infos.title.length > 14 ? infos.title.substr(0, 12) + "..." : infos.title);
                         window.ui.contener.css("display", "block")
                         window.ui.loading.css("display", "none");
                         window.ui.contener.oldPage = page;

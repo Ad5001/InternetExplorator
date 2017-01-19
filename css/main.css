@@ -19,7 +19,6 @@ body {
     border: none;
     -ms-user-select: all;
     user-select: all;
-    cursor: move;
 }
 
 input.urlbar {
