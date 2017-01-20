@@ -108,7 +108,9 @@ window.onload = function() {
 
 
         // Game UI Test
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 200 })) // Loading Test User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130 })) // Loading Test User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130, x: 700 })) // Loading Test User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 250, x: 350 })) // Loading Test User
         window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200, x: 200 })) // Loading Test Action
 
 

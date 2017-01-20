@@ -2,16 +2,17 @@
 Crafty.c("User", {
     init: function() {
         this.requires("2D, DOM, Color, Image");
-        this.w = 70;
-        this.h = 70;
+        this.w = 128;
+        this.h = 128;
         this.image("images/users/" + Math.floor(Math.random() * 5) + ".png")
         this.page = window.troll_pages[Math.floor(Math.random() * window.troll_pages.length)];
-        this.title = Crafty.e('2D, DOM, Text')
-            .attr({
-                x: this.x + this.w + 10,
-                y: this.y + (this.h / 2)
-            }).text(this.page.title);
-
+        Crafty.e("Delay").delay(function() {
+            this.title = Crafty.e('2D, DOM, Text')
+                .attr({
+                    x: this.x + this.w + 10,
+                    y: this.y + (this.h / 2)
+                }).text(this.page.title);
+        }, 100, 0)
     },
 });
 
@@ -40,8 +41,6 @@ Crafty.c("Action", {
         this.bind("StopDrag", function() {
             et = Crafty.findClosestEntityByComponent("User", this.x, this.y);
             if (et !== undefined) {
-                // if (!((et.x - et.w) > this.x /* Entity is upper on x than the current action*/ || et.x < (this.x - this.w) /* Entity is too lower on X than the current action*/ ||
-                // (et.y - et.h) > this.x /* Entity is upper on y than the current action*/ || et.y < (this.y - this.h) /* Entity is too lower on Y than the current action*/ )) {
                 // If here, the user is touching the action.
                 et.visible = false;
                 this.visible = false;
