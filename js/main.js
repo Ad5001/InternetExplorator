@@ -11,7 +11,8 @@ window.onload = function() {
         "images": [
             "images/UI/back.png", "images/UI/Loading.gif", "images/UI/AboutStartup/OutlookBrand.png", "images/UI/Outlook/mail1.png", "images/UI/Go.png", "images/UI/Home.png", "images/UI/Close.png", // UI
             "images/screens/StartupPage.png", "images/screens/Bing.png", "images/screens/404.png", "images/screens/Outlook/1.png", // Pages
-            "images/alerts/StartupMsg.png"
+            "images/alerts/StartupMsg.png",
+            "images/users/1.png", "images/users/2.png", "images/users/3.png", "images/users/4.png", "images/users/5.png" // Users
         ]
     }, function() {
 
@@ -113,7 +114,6 @@ window.onload = function() {
 
 
 
-
         window.ui.pageinput = Crafty.e("HTML") // Page input
             .append("<input type='text' id='page' class='urlbar' onkeyup='if(event.which == 13) {Crafty.trigger(\"UpdateContent\");}' />" +
                 "<select class='urlbar' onchange='Crafty.redirectToURL(this.value);this.value=\"\";'><option value='about:startup'></option><option value='outlook.com'>Outlook</option></select>");
@@ -154,6 +154,15 @@ window.onload = function() {
             .css("font", "15px Arial")
 
         window.game = { coins: 0 };
+
+
+        // From Launching.
+        Crafty.e('Alert')
+            .attr({ x: 10, y: 10, w: 606, h: 424 })
+            .image("images/alerts/StartupMsg.png")
+            .button({ x2: 492, y2: 373, w: 80, h: 24, onclick: function() { window.alerts[1].dismiss() } }); // Creating the "OK" button
+
+        console.log(window.alerts[1])
 
 
 

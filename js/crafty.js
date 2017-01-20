@@ -9313,7 +9313,6 @@
             // Returns the font string to use
             _fontString: function() {
                 r = this._textFont.type + ' ' + this._textFont.variant + ' ' + this._textFont.weight + ' ' + this._textFont.size + '/' + this._textFont.lineHeight + ' ' + this._textFont.family;
-                Crafty.log(r);
                 return r;
             },
             /**@
