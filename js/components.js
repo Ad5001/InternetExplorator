@@ -63,7 +63,8 @@ Crafty.c("WinDrag", {
         this.canBeAboveScreen = false;
         this.css("user-select", "none");
         this.css("cursor", "move");
-        this.mousePos = { x: function(ele) { return ele.w / 2 }, y: function(ele) { return ele.y / 2 } }
+        this.mousePos = { x: function(ele) { return ele.w / 2 }, y: function(ele) { return ele.h / 2 } }
+        this.bind("StopDrag", function(ev) {})
         this.bind("Dragging", function(ev) {
             if (this.mousePos.x instanceof Function) {
                 MouseX = this.mousePos.x(this);
@@ -75,11 +76,16 @@ Crafty.c("WinDrag", {
             } else {
                 MouseY = this.mousePos.y;
             }
-            this.x = ev.clientX - MouseX;
+            this.move("w", this.x);
+            this.move("e", ev.clientX - MouseX);
             toY = ev.clientY - MouseY;
             if (toY < 118 && !this.canBeAboveScreen) toY = 118; // To not go out of the content page
-            this.y = toY;
-            this.dragCallback();
+            this.move("n", this.y);
+            this.move("s", toY);
+            window.currentAlert = this;
+            setTimeout(function() {
+                window.currentAlert.dragCallback(); // Temporary working solution
+            }, 100)
         })
         this.dragCallback = function() {};
     }
@@ -99,18 +105,16 @@ Crafty.c("Alert", {
         window.alerts[this.alertId] = this;
         window.currentAlert = this;
         setTimeout(function() {
-            window.currentAlert.append("<img src='images/UI/WinTop/1.png' style='width: " + window.currentAlert.w + "px; height: 29px'></img><img src='images/UI/WinTop/2.png' style='position: absolute; float: right; width: 72px; height: 24px'></img>");
-        }, 2000)
+            window.currentAlert.attach(Crafty.e("2D, DOM, Image").image('images/UI/WinTop/1.png').attr({ w: window.currentAlert.w, h: 29, x: window.currentAlert.x, y: window.currentAlert.y }));
+        }, 100)
 
-        this.dragCallback = function() {
-            this.append("<img src='images/UI/WinTop/1.png' style='width: " + this.w + "px; height: 29px'></img><img src='images/UI/WinTop/2.png' style='position: absolute; float: right; width: 72px; height: 24px'></img>");
-        }
+        this.dragCallback = function() {}
     },
     button: function(prop) {
         prop.x = this.x + prop.x2;
         prop.y = this.y + prop.y2;
         prop.owner = this;
-        this.buttons.push(Crafty.e("2D, DOM, Button, Mouse, Color").attr(prop).css("opacity", "1").color("lime").bind("Click", prop.onclick).bind("EnterFrame", function() {
+        this.buttons.push(Crafty.e("2D, DOM, Button, Mouse, Color").attr(prop).css({ opacity: "0.1", cursor: "pointer" }).bind("Click", prop.onclick).bind("EnterFrame", function() {
             this.x = this.owner.x + this.x2;
             this.y = this.owner.y + this.y2;
         }));
@@ -118,6 +122,9 @@ Crafty.c("Alert", {
     dismiss: function() {
         this.css("display", "none");
         this.buttons.forEach(function(b) {
+            b.css("display", "none")
+        })
+        this._children.forEach(function(b) {
             b.css("display", "none")
         })
     }
