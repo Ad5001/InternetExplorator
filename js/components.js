@@ -4,16 +4,17 @@ Crafty.c("User", {
         this.requires("2D, DOM, Color, Image");
         this.w = 128;
         this.h = 128;
-        this.image("images/users/" + Math.floor(Math.random() * 5) + ".png")
+        this.image("images/users/" + Math.floor(Math.random() * 13) + ".png")
         this.page = window.troll_pages[Math.floor(Math.random() * window.troll_pages.length)];
-        Crafty.e("Delay").delay(function() {
-            this.title = Crafty.e('2D, DOM, Text')
-                .attr({
-                    x: this.x + this.w + 10,
-                    y: this.y + (this.h / 2)
-                }).text(this.page.title);
-        }, 100, 0)
     },
+    createText: function(prop) {
+        et = Crafty.e('2D, DOM, HTML')
+            .attr(prop).css({ "color": "black", "user-select": "none" }).append(this.page.Title + "<br>" + this.page.url)
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(et)
+        this.attach(et)
+        Crafty.log(this.page.Title);
+        return this;
+    }
 });
 
 
@@ -37,12 +38,14 @@ Crafty.c("Action", {
         rand = Math.floor(Math.random() * i);
         this.page = Crafty(users[rand]).page;
         this.text("<p>" + this.page.action + "</p>");
-        this.w = this.page.action.length * 6;
+        this.w = this.page.len;
+        this.h = this.page.action.split("<p></p>").length * 30 + 10;
         this.bind("StopDrag", function() {
-            et = Crafty.findClosestEntityByComponent("User", this.x, this.y);
+            et = Crafty.findClosestEntityByComponent("User", this.x + (this.w / 2), this.y + (this.h / 2));
             if (et !== undefined) {
                 // If here, the user is touching the action.
                 et.visible = false;
+                et._children[0].visible = false;
                 this.visible = false;
                 gain = 1;
                 if (this.page == et.page) {
@@ -100,7 +103,6 @@ Crafty.c("Alert", {
         this.buttons = [];
         this.canBeAboveScreen = true;
         this.alertId = Crafty("Alert").length;
-        console.log(this.alertId)
         window.alerts[this.alertId] = this;
         window.currentAlert = this;
         setTimeout(function() {

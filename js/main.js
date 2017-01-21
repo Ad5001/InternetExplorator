@@ -33,7 +33,6 @@ window.onload = function() {
                         if (window.pages[page] == undefined) {
                             page = "404";
                         }
-                        console.log(window.pages[page].url);
                         infos = window.pages[page];
                         infos.enter();
                         window.ui.title.text(infos.title.length > 14 ? infos.title.substr(0, 12) + "..." : infos.title);
@@ -55,18 +54,21 @@ window.onload = function() {
         window.troll_pages = [{
                 "url": "firefox.com",
                 "Title": "Firefox - Download",
-                "action": "Alert the user: \"A firefox bite your internet cable.\nPlease try again later\""
+                "action": "Alert the user:</p><p> \"A firefox bite your internet cable.\nPlease try again later\"",
+                "len": "350"
             },
             {
                 "url": "google.com",
-                "Title": "google",
-                "action": "Redirect to Bing"
+                "Title": "Google",
+                "action": "Redirect to Bing",
+                "len": "125"
 
             },
             {
                 "url": "adobe.com/flash-player",
                 "Title": "Download Adobe Flash player",
-                "action": "Alert the user: \"Adobe Flash player is required to see this content.\""
+                "action": "Alert the user:</p><p> \"Adobe Flash player is required to see this content.\"",
+                "len": "350"
             }
         ]
 
@@ -107,11 +109,14 @@ window.onload = function() {
 
 
 
-        // Game UI Test
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130 })) // Loading Test User
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130, x: 700 })) // Loading Test User
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 250, x: 350 })) // Loading Test User
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200, x: 200 })) // Loading Test Action
+        // Game UI
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130 }).createText({ x: 10, y: 260, w: 100 })) // Loading Left User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130, x: 700 }).createText({ x: 698, y: 260, w: 100 })) // Loading Right User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 270, x: 350 }).createText({ x: 250, y: 250, w: 300 })) // Loading center User
+        Crafty("User").get(1)._children[0].css("text-align", "right");
+        Crafty("User").get(2)._children[0].css("text-align", "center");
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200 })) // Loading First Action
+        Crafty("Action").get(0).x = 399 - (Crafty("Action").get(0).w / 2)
 
 
 
@@ -163,8 +168,8 @@ window.onload = function() {
             .attr({ x: 10, y: 10, w: 606, h: 424 })
             .image("images/alerts/StartupMsg.png")
             .button({ x2: 492, y2: 373, w: 80, h: 24, onclick: function() { window.alerts[1].dismiss() } }); // Creating the "OK" button
+        if (document.getElementById("page").value !== "about:startup" && document.getElementById("page").value !== "") window.alerts[1].dismiss();
 
-        console.log(window.alerts[1])
 
 
 
