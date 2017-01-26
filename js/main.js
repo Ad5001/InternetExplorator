@@ -172,11 +172,11 @@ window.onload = function() {
 
         window.ui.score = Crafty.e('2D, DOM, HTML') // Loading the Score bar
             .attr({ x: 381, y: 64, w: 200, score: 0 })
-            .append("0 <img src='images/ui/rage.png' class='rage'></img>")
+            .append("0 <img src='images/UI/rage.png' class='rage'></img>")
             .css({ "font": "13px Calibri", "color": "black", "vertical-align": "middle" })
             .bind("GainCoin", function(data) {
                 this.score += data.gain;
-                this.replace(this.score + "<img src='images/ui/rage.png' class='rage'></img>")
+                this.replace(this.score + "<img src='images/UI/rage.png' class='rage'></img>")
             })
 
 
@@ -204,6 +204,7 @@ window.onload = function() {
             .attr({ x: 54, y: 318, w: 118, h: 116 })
             .image("images/UI/AboutStartup/OutlookBrand.png")
             .bind('Click', function(ev) {
+                alert("Hey")
                 Crafty.redirectToURL("outlook.com");
             }));
 

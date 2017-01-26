@@ -3,7 +3,8 @@ Have you ever wondered why did you get so much ragging errors while browsering w
 This is the answer to all your questions.   
 This game is a satire of the well known Internet browser of Microsoft.      
 
-
+## License.
+This game is licensed under the [BoxOfDevs Public General License v1.1.2](Ad5001/InternetExplorator/blob/master/LICENSE)
 
 ## Preface:
 You play in a simple browser under Windovs XD (spelled correctly) that you just updated to the 8.0 version, Internet Explorator.   
