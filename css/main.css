@@ -34,3 +34,32 @@ select.urlbar {
     left: 55px;
     z-index: 2;
 }
+
+img.rage {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    position: absolute;
+    top: -13px;
+    left: 15px;
+}
+
+
+/* Progress bar */
+
+#progress {
+    background: #333;
+    border-radius: 13px;
+    height: 10px;
+    width: 100px;
+    padding: 2px;
+}
+
+#progress2 {
+    content: '';
+    display: block;
+    background: #00AAFF;
+    width: 0%;
+    height: 100%;
+    border-radius: 9px;
+}

@@ -1,3 +1,10 @@
+// Custom functions
+Math.__proto__.rnd = function(n, by) {
+    n *= (10 * by)
+    n = Math.round(n);
+    return n / (10 * by);
+}
+
 // Create users default class:
 Crafty.c("User", {
     init: function() {
@@ -9,10 +16,46 @@ Crafty.c("User", {
     },
     createText: function(prop) {
         et = Crafty.e('2D, DOM, HTML')
-            .attr(prop).css({ "color": "black", "user-select": "none" }).append(this.page.Title + "<br>" + this.page.url)
+            .attr(prop).css({ "color": "black", "user-select": "none" }).append(this.page.Title + "<br>" + this.page.url + "<br>") // Page and URL
+        et._element.setAttribute("onselectstart", "return false");
+        et._element.setAttribute("unselectable", "on");
+        et.owner = this;
+        this.css("opacity", " 0");
+        et.css("opacity", " 0");
+        et.css({ "-moz-user-select": "none", "-webkit-user-select": "none", "-ms-user-select": "none", "user-select": "none" }); // WHAT ELSE IS NEEDED TO MAKE UNSELECTABLE CONTENT :O?
+        et.progress = 0;
+        et.bind("EnterFrame", function() {
+            if (this.visible) {
+                this.progress += 0.2 * (Math.random() * 3);
+                if (this.progress <= 10 && this.progress > 0) {
+                    this.css("opacity", Math.rnd(this.progress / 10, 3).toString());
+                    this.owner.css("opacity", Math.rnd(this.progress / 10, 3).toString());
+                }
+                if (this.progress >= 89 || this.progress <= 0) {
+                    this.css("opacity", Math.rnd((100 - this.progress) / 10, 3).toString());
+                    this.owner.css("opacity", Math.rnd((100 - this.progress) / 10, 3).toString());
+                    if (this.progress <= 0 && this.progress >= -0.1) {
+                        this.owner.page = window.troll_pages[Math.floor(Math.random() * window.troll_pages.length)];
+                        this.owner.image("images/users/" + Math.floor(Math.random() * 13) + ".png");
+                        parts = this._element.innerHTML.split("<br>");
+                        this._element.innerHTML = this.owner.page.Title + "<br>" + this.owner.page.url + "<br>" + parts[parts.length - 1];
+                        this.progress = 0;
+                    }
+                }
+                if (this.progress > 99.9) {
+                    gain = -3;
+                    Crafty.trigger("GainCoin", { gain: gain });
+                    this.owner.page = window.troll_pages[Math.floor(Math.random() * window.troll_pages.length)];
+                    this.owner.image("images/users/" + Math.floor(Math.random() * 13) + ".png");
+                    parts = this._element.innerHTML.split("<br>");
+                    this._element.innerHTML = this.owner.page.Title + "<br>" + this.owner.page.url + "<br>" + parts[parts.length - 1];
+                    this.progress = 0;
+                }
+                this._element.childNodes[this._element.childNodes.length - 1].childNodes[0].style.width = this.progress + "%";
+            }
+        })
         window.pages["misrocoft.com/work-online/errorer"].addEntity(et)
-        this.attach(et)
-        Crafty.log(this.page.Title);
+        this.attach(et);
         return this;
     }
 });
@@ -33,8 +76,12 @@ Crafty.c("Action", {
         this.css("vertical-align", "middle");
         this.css("font-size", "13px");
         this.css("font-family", "DengXian");
+        this._element.setAttribute("onselectstart", "Crafty(this.parentNode.id.substr(3)).trigger('Dragging');return false");
+        this._element.setAttribute("unselectable", "on");
+        this.css({ "-moz-user-select": "none", "-webkit-user-select": "none", "-ms-user-select": "none", "user-select": "none" }); // WHAT ELSE IS NEEDED TO MAKE UNSELECTABLE CONTENT :O?
         users = Crafty("User");
         i = users.length;
+        this.redo = 0;
         rand = Math.floor(Math.random() * i);
         this.page = Crafty(users[rand]).page;
         this.text("<p>" + this.page.action + "</p>");
@@ -44,15 +91,37 @@ Crafty.c("Action", {
             et = Crafty.findClosestEntityByComponent("User", this.x + (this.w / 2), this.y + (this.h / 2));
             if (et !== undefined) {
                 // If here, the user is touching the action.
-                et.visible = false;
-                et._children[0].visible = false;
-                this.visible = false;
+                et._children[0].progress = -10;
+                this.redo = 200;
                 gain = 1;
                 if (this.page == et.page) {
                     gain = 4;
+                    Crafty.audio.play("critical")
+                } else {
+                    Crafty.audio.play("alert")
                 }
-                window.game.coin += gain;
+                Crafty.trigger("GainCoin", { gain: gain });
             };
+        })
+        this.bind("EnterFrame", function() {
+            if (this.redo > 100) { // Go not visible
+                this.redo -= 2;
+                this.css("opacity", Math.rnd((this.redo - 100) / 100, 2).toString());
+            } else if (this.redo > 0) {
+                this.redo -= 2;
+                this.css("opacity", Math.rnd((100 - this.redo) / 100, 2).toString());
+            }
+            if (this.redo == 100) {
+                users = Crafty("User");
+                i = users.length;
+                rand = Math.floor(Math.random() * i);
+                this.page = Crafty(users[rand]).page;
+                this.text("<p>" + this.page.action + "</p>");
+                this.w = this.page.len;
+                this.h = this.page.action.split("<p></p>").length * 30 + 10;
+                this.x = this.baseX();
+                this.y = this.baseY();
+            }
         })
     }
 });
@@ -104,10 +173,7 @@ Crafty.c("Alert", {
         this.canBeAboveScreen = true;
         this.alertId = Crafty("Alert").length;
         window.alerts[this.alertId] = this;
-        window.currentAlert = this;
-        setTimeout(function() {
-            window.currentAlert.attach(Crafty.e("2D, DOM, Image").image('images/UI/WinTop/1.png').attr({ w: window.currentAlert.w, h: 29, x: window.currentAlert.x, y: window.currentAlert.y }));
-        }, 100)
+        this.attach(Crafty.e("2D, DOM, Image").image('images/UI/WinTop/1.png').attr({ w: this.w, h: 29, x: this.x, y: this.y }));
 
         this.dragCallback = function() {}
     },
@@ -121,12 +187,12 @@ Crafty.c("Alert", {
         }));
     },
     dismiss: function() {
-        this.css("display", "none");
+        this.visible = false;
         this.buttons.forEach(function(b) {
-            b.css("display", "none")
+            b.visible = false
         })
         this._children.forEach(function(b) {
-            b.css("display", "none")
+            b.visible = false
         })
     }
 });
@@ -142,7 +208,7 @@ Page = function(title, url, icon, action, leave) {
         elements: [],
 
         addEntity: function(entity) {
-            entity.css("display", "none");
+            entity.visible = false;
             this.elements[entity.getId()] = entity;
             return this;
         },
@@ -171,14 +237,14 @@ Page = function(title, url, icon, action, leave) {
         enter: function() {
             this._action();
             this.elements.forEach(function(ele) {
-                ele.css("display", "block")
+                ele.visible = true;
             })
         },
 
         leave: function() {
             this._action();
             this.elements.forEach(function(ele) {
-                ele.css("display", "none")
+                ele.visible = false;
             })
         }
     };

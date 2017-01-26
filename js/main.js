@@ -2,6 +2,26 @@ window.onload = function() {
     Crafty.init(798, 435, document.getElementById('game')); // init
 
     window.resizeTo(815, 475);
+    Crafty.timer.FPS(30);
+
+    // Checking HTAs
+    window.isHTA = false;
+    var htaApp = document.getElementsByTagName("HTA:APPLICATION")
+    if (!htaApp.length) {
+        htaApp = document.getElementsByTagName("APPLICATION");
+    }
+    if (htaApp.length == 1 && htaApp[0]) {
+        window.isHTA = typeof htaApp[0].commandLine !== "undefined";
+    }
+
+
+    Crafty.redirectToURL = function(url) {
+        document.getElementById("page").value = url;
+        if (!window.isHTA) {
+            location.hash = url;
+        }
+        Crafty.trigger("UpdateContent");
+    }
 
 
     window.loadingScreen = Crafty.e("HTML")
@@ -12,45 +32,18 @@ window.onload = function() {
             "images/UI/back.png", "images/UI/Loading.gif", "images/UI/AboutStartup/OutlookBrand.png", "images/UI/Outlook/mail1.png", "images/UI/Go.png", "images/UI/Home.png", "images/UI/Close.png", // UI
             "images/screens/StartupPage.png", "images/screens/Bing.png", "images/screens/404.png", "images/screens/Outlook/1.png", // Pages
             "images/alerts/StartupMsg.png",
-            "images/users/1.png", "images/users/2.png", "images/users/3.png", "images/users/4.png", "images/users/5.png" // Users
+            "images/users/1.png", "images/users/2.png", "images/users/3.png", "images/users/4.png", "images/users/5.png", "images/users/6.png", "images/users/7.png", "images/users/8.png", "images/users/9.png", "images/users/10.png", "images/users/11.png", "images/users/12.png" // Users
         ]
     }, function() {
 
+        Crafty.audio.add("background", "audio/background.mp3", 0.2);
+        Crafty.audio.add("critical", "audio/Critical.wav");
+        Crafty.audio.add("alert", "audio/NormalError.wav");
+
+        // Definitions
         window.ui = {}
         window.alerts = {}
-
-        window.ui.contener = Crafty.e('2D, DOM, Image') // Page content
-            .attr({ x: 0, y: 118, w: 797, h: 317, oldPage: "about:startup" })
-            .image("images/screens/StartupPage.png")
-            .bind("UpdateContent", function() {
-                page = document.getElementById("page").value;
-                if (page !== window.ui.contener.oldPage) {
-                    window.ui.contener.css("display", "none");
-                    window.pages[window.ui.contener.oldPage].leave();
-                    window.ui.loading.css("display", "block")
-                    setTimeout(function() {
-                        page = document.getElementById("page").value;
-                        if (window.pages[page] == undefined) {
-                            page = "404";
-                        }
-                        infos = window.pages[page];
-                        infos.enter();
-                        window.ui.title.text(infos.title.length > 14 ? infos.title.substr(0, 12) + "..." : infos.title);
-                        window.ui.contener.css("display", "block")
-                        window.ui.loading.css("display", "none");
-                        window.ui.contener.oldPage = page;
-                    }, 5000)
-                }
-            });
-
-
-        Crafty.redirectToURL = function(url) {
-            document.getElementById("page").value = url;
-            location.hash = url;
-            Crafty.trigger("UpdateContent");
-        }
-
-
+        window.game = { coins: 0 };
         window.troll_pages = [{
                 "url": "firefox.com",
                 "Title": "Firefox - Download",
@@ -61,7 +54,7 @@ window.onload = function() {
                 "url": "google.com",
                 "Title": "Google",
                 "action": "Redirect to Bing",
-                "len": "125"
+                "len": "150"
 
             },
             {
@@ -69,11 +62,37 @@ window.onload = function() {
                 "Title": "Download Adobe Flash player",
                 "action": "Alert the user:</p><p> \"Adobe Flash player is required to see this content.\"",
                 "len": "350"
-            }
+            },
+            {
+                "url": "kaperski.com/download",
+                "Title": "Download Kaperski Antivirus",
+                "action": "Alert the user:</p><p> \"A virus was detected while downloading this page.\"",
+                "len": "350"
+            },
+            {
+                "url": "twitter.com",
+                "Title": "Twitter - Social networking",
+                "action": "Redirect to MSN",
+                "len": "150"
+            },
+            {
+                "url": "gameurl.com/play",
+                "Title": "LAST LEVEL OF THE HARDEST GAME IN THE WORLD",
+                "action": "Alert the user:</p><p> \"Internet Explorator has stoped working.\"",
+                "len": "350"
+            },
+            {
+                "url": "steampowered.com",
+                "Title": "Steam - THE Game store",
+                "action": "Redirect to the Windovs Store",
+                "len": "200"
+            },
         ]
 
 
         window.pages = {};
+
+        // Page related content
 
         // Registering pages...
         new Page("Bing research", "bing.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Bing.png") }, function() {});
@@ -81,7 +100,12 @@ window.onload = function() {
         new Page("Google", "google.com", "images/icons/404.png", function() { Crafty.redirectToURL("bing.com") }, function() {});
         new Page("Outlook Mail", "outlook.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/1.png"); }, function() {});
         new Page("You've been hired! - Outlook Mail", "outlook.com/mail/ThisIsTheBestMailMessageUrlEver", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/2.png"); }, function() {});
-        new Page("Misrocoft - Work Online", "misrocoft.com/work-online/errorer", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Error/1.png"); }, function() {});
+        new Page("Misrocoft - Work Online", "misrocoft.com/work-online/errorer", "images/icons/404.png", function() {
+            window.ui.contener.image("images/screens/Error/1.png");
+            Crafty.audio.play("background", -1);
+        }, function() {
+            Crafty.audio.pause('background');
+        });
         new Page("404 NOT FOUND", "404", "images/icons/404.png", function() { window.ui.contener.image("images/screens/404.png"); }, function() {});
 
         // Registering pages elements.
@@ -110,16 +134,45 @@ window.onload = function() {
 
 
         // Game UI
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130 }).createText({ x: 10, y: 260, w: 100 })) // Loading Left User
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130, x: 700 }).createText({ x: 698, y: 260, w: 100 })) // Loading Right User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130 }).createText({ x: 10, y: 260, w: 300 })) // Loading Left User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130, x: 700 }).createText({ x: 498, y: 260, w: 300 })) // Loading Right User
         window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 270, x: 350 }).createText({ x: 250, y: 250, w: 300 })) // Loading center User
-        Crafty("User").get(1)._children[0].css("text-align", "right");
-        Crafty("User").get(2)._children[0].css("text-align", "center");
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200 })) // Loading First Action
+        Crafty("User").get(0)._children[0].append("<div id='progress'><div id='progress2'></div></div>");
+        Crafty("User").get(1)._children[0].css("text-align", "right").append("<div id='progress' style='float: right;'><div id='progress2'></div></div>");
+        Crafty("User").get(2)._children[0].css("text-align", "center").append("<div id='progress' style='margin: auto;'><div id='progress2'></div></div>");
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200, baseY: function() { return 200; } })) // Loading First Action
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 350, baseY: function() { return 350; }, baseX: function() { return 0; } })) // Loading Second Action
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 350, x: 458, baseY: function() { return 350; }, baseX: function() { return 458; } })) // Loading last Action
         Crafty("Action").get(0).x = 399 - (Crafty("Action").get(0).w / 2)
+        Crafty("Action").get(0).baseX = function() { return 399 - (Crafty("Action").get(0).w / 2) }
 
 
 
+
+        // Internet Explorator UI
+        window.ui.contener = Crafty.e('2D, DOM, Image') // Page content
+            .attr({ x: 0, y: 118, w: 797, h: 317, oldPage: "about:startup" })
+            .image("images/screens/StartupPage.png")
+            .bind("UpdateContent", function() {
+                page = document.getElementById("page").value;
+                if (page !== window.ui.contener.oldPage) {
+                    window.ui.contener.visible = false;
+                    window.pages[window.ui.contener.oldPage].leave();
+                    window.ui.loading.visible = true
+                    setTimeout(function() {
+                        page = document.getElementById("page").value;
+                        if (window.pages[page] == undefined) {
+                            page = "404";
+                        }
+                        infos = window.pages[page];
+                        infos.enter();
+                        window.ui.title.text(infos.title.length > 14 ? infos.title.substr(0, 12) + "..." : infos.title);
+                        window.ui.contener.visible = true
+                        window.ui.loading.visible = false;
+                        window.ui.contener.oldPage = page;
+                    }, 5000)
+                }
+            });
 
         window.ui.pageinput = Crafty.e("HTML") // Page input
             .append("<input type='text' id='page' class='urlbar' onkeyup='if(event.which == 13) {Crafty.trigger(\"UpdateContent\");}' />" +
@@ -128,7 +181,7 @@ window.onload = function() {
         window.ui.loading = Crafty.e('2D, DOM, Image') // Loading gif
             .attr({ x: 180, y: 120, w: 441, h: 291 })
             .image("images/UI/Loading.gif")
-            .css("display", "none");
+            .visible = false;
 
         window.ui.back = Crafty.e('2D, DOM, Image, Mouse') // Loading back button
             .attr({ x: 8, y: 55, w: 79, h: 33 })
@@ -160,7 +213,14 @@ window.onload = function() {
             .text("New page")
             .css("font", "15px Arial")
 
-        window.game = { coins: 0 };
+        window.ui.score = Crafty.e('2D, DOM, HTML') // Loading the Score bar
+            .attr({ x: 381, y: 64, w: 200, score: 0 })
+            .append("0 <img src='images/ui/rage.png' class='rage'></img>")
+            .css({ "font": "13px Calibri", "color": "black", "vertical-align": "middle" })
+            .bind("GainCoin", function(data) {
+                this.score += data.gain;
+                this.replace(this.score + "<img src='images/ui/rage.png' class='rage'></img>")
+            })
 
 
         // From Launching.
@@ -168,7 +228,6 @@ window.onload = function() {
             .attr({ x: 10, y: 10, w: 606, h: 424 })
             .image("images/alerts/StartupMsg.png")
             .button({ x2: 492, y2: 373, w: 80, h: 24, onclick: function() { window.alerts[1].dismiss() } }); // Creating the "OK" button
-        if (document.getElementById("page").value !== "about:startup" && document.getElementById("page").value !== "") window.alerts[1].dismiss();
 
 
 
@@ -179,6 +238,7 @@ window.onload = function() {
 
         if (location.hash.length > 1) {
             Crafty.redirectToURL(location.hash.substr(1));
+            window.alerts[1].dismiss();
         }
 
     });
