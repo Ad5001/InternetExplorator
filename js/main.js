@@ -36,9 +36,9 @@ window.onload = function() {
         ]
     }, function() {
 
-        Crafty.audio.add("background", "audio/background.mp3", 0.2);
-        Crafty.audio.add("critical", "audio/Critical.wav");
-        Crafty.audio.add("alert", "audio/NormalError.wav");
+        Crafty.audio.add("background", "audio/background.mp3");
+        Crafty.audio.add("critical", "audio/Critical.mp3");
+        Crafty.audio.add("alert", "audio/Alert.mp3");
 
         // Definitions
         window.ui = {}
@@ -91,60 +91,6 @@ window.onload = function() {
 
 
         window.pages = {};
-
-        // Page related content
-
-        // Registering pages...
-        new Page("Bing research", "bing.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Bing.png") }, function() {});
-        new Page("New page", "about:startup", "images/icons/404.png", function() { window.ui.contener.image("images/screens/StartupPage.png"); }, function() {});
-        new Page("Google", "google.com", "images/icons/404.png", function() { Crafty.redirectToURL("bing.com") }, function() {});
-        new Page("Outlook Mail", "outlook.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/1.png"); }, function() {});
-        new Page("You've been hired! - Outlook Mail", "outlook.com/mail/ThisIsTheBestMailMessageUrlEver", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/2.png"); }, function() {});
-        new Page("Misrocoft - Work Online", "misrocoft.com/work-online/errorer", "images/icons/404.png", function() {
-            window.ui.contener.image("images/screens/Error/1.png");
-            Crafty.audio.play("background", -1);
-        }, function() {
-            Crafty.audio.pause('background');
-        });
-        new Page("404 NOT FOUND", "404", "images/icons/404.png", function() { window.ui.contener.image("images/screens/404.png"); }, function() {});
-
-        // Registering pages elements.
-        window.pages["about:startup"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Outlook link
-            .attr({ x: 54, y: 318, w: 118, h: 116 })
-            .image("images/UI/AboutStartup/OutlookBrand.png")
-            .bind('Click', function(ev) {
-                Crafty.redirectToURL("outlook.com");
-            }));
-
-        window.pages["outlook.com"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Mail link
-            .attr({ x: 251, y: 257, w: 467, h: 31 })
-            .image("images/UI/Outlook/mail1.png")
-            .bind('Click', function(ev) {
-                Crafty.redirectToURL("outlook.com/mail/ThisIsTheBestMailMessageUrlEver");
-            }));
-
-        window.pages["outlook.com/mail/ThisIsTheBestMailMessageUrlEver"].addEntity(Crafty.e('2D, DOM, Mouse, HTML') // Loading the Link
-            .attr({ x: 211, y: 379, w: 300 })
-            .append("misrcoft.com/work-online/errorer")
-            .bind('Click', function(ev) {
-                Crafty.redirectToURL("misrcoft.com/work-online/errorer");
-            })
-            .css({ color: "blue", "font": "10px DengXian", "-ms-user-select": "all", "user-select": "all" }));
-
-
-
-        // Game UI
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130 }).createText({ x: 10, y: 260, w: 300 })) // Loading Left User
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130, x: 700 }).createText({ x: 498, y: 260, w: 300 })) // Loading Right User
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 270, x: 350 }).createText({ x: 250, y: 250, w: 300 })) // Loading center User
-        Crafty("User").get(0)._children[0].append("<div id='progress'><div id='progress2'></div></div>");
-        Crafty("User").get(1)._children[0].css("text-align", "right").append("<div id='progress' style='float: right;'><div id='progress2'></div></div>");
-        Crafty("User").get(2)._children[0].css("text-align", "center").append("<div id='progress' style='margin: auto;'><div id='progress2'></div></div>");
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200, baseY: function() { return 200; } })) // Loading First Action
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 350, baseY: function() { return 350; }, baseX: function() { return 0; } })) // Loading Second Action
-        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 350, x: 458, baseY: function() { return 350; }, baseX: function() { return 458; } })) // Loading last Action
-        Crafty("Action").get(0).x = 399 - (Crafty("Action").get(0).w / 2)
-        Crafty("Action").get(0).baseX = function() { return 399 - (Crafty("Action").get(0).w / 2) }
 
 
 
@@ -208,6 +154,17 @@ window.onload = function() {
                 Crafty.trigger("UpdateContent");
             });
 
+        window.ui.pause = Crafty.e('2D, DOM, Mouse') // Loading the Pause button
+            .attr({ x: 725, y: 4, w: 23, h: 23 })
+            .bind("Click", function() {
+                Crafty.pause();
+            })
+
+        window.ui.fps = Crafty.e('2D, DOM, Image, Mouse, HTML') // Loading the FPS setting
+            .attr({ x: 450, y: 54, w: 40, h: 40 })
+            .image("images/UI/FPS.png")
+            .append("<select style='opacity: 0.1; width: 40px; height: 40px;' onchange='Crafty.timer.FPS(this.value)'><option value='120'>120</option><option value='60'>60</option><option value='30'>30</option><option value='15'>15</option></select>")
+
         window.ui.title = Crafty.e('2D, DOM, Text') // Loading the Title
             .attr({ x: 23, y: 8, w: 103 })
             .text("New page")
@@ -221,6 +178,64 @@ window.onload = function() {
                 this.score += data.gain;
                 this.replace(this.score + "<img src='images/ui/rage.png' class='rage'></img>")
             })
+
+
+
+
+
+        // Page related content
+
+        // Registering pages...
+        new Page("Bing research", "bing.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Bing.png") }, function() {});
+        new Page("New page", "about:startup", "images/icons/404.png", function() { window.ui.contener.image("images/screens/StartupPage.png"); }, function() {});
+        new Page("Google", "google.com", "images/icons/404.png", function() { Crafty.redirectToURL("bing.com") }, function() {});
+        new Page("Outlook Mail", "outlook.com", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/1.png"); }, function() {});
+        new Page("You've been hired! - Outlook Mail", "outlook.com/mail/ThisIsTheBestMailMessageUrlEver", "images/icons/404.png", function() { window.ui.contener.image("images/screens/Outlook/2.png"); }, function() {});
+        new Page("Misrocoft - Work Online", "misrocoft.com/work-online/errorer", "images/icons/404.png", function() {
+            window.ui.contener.image("images/screens/Error/1.png");
+            Crafty.audio.play("background", -1, 0.01);
+        }, function() {
+            Crafty.audio.pause('background');
+        });
+        new Page("404 NOT FOUND", "404", "images/icons/404.png", function() { window.ui.contener.image("images/screens/404.png"); }, function() {});
+
+        // Registering pages elements.
+        window.pages["about:startup"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Outlook link
+            .attr({ x: 54, y: 318, w: 118, h: 116 })
+            .image("images/UI/AboutStartup/OutlookBrand.png")
+            .bind('Click', function(ev) {
+                Crafty.redirectToURL("outlook.com");
+            }));
+
+        window.pages["outlook.com"].addEntity(Crafty.e('2D, DOM, Image, Mouse') // Mail link
+            .attr({ x: 251, y: 257, w: 467, h: 31 })
+            .image("images/UI/Outlook/mail1.png")
+            .bind('Click', function(ev) {
+                Crafty.redirectToURL("outlook.com/mail/ThisIsTheBestMailMessageUrlEver");
+            }));
+
+        window.pages["outlook.com/mail/ThisIsTheBestMailMessageUrlEver"].addEntity(Crafty.e('2D, DOM, Mouse, HTML') // Loading the Link
+            .attr({ x: 211, y: 379, w: 300 })
+            .append("misrcoft.com/work-online/errorer")
+            .bind('Click', function(ev) {
+                Crafty.redirectToURL("misrcoft.com/work-online/errorer");
+            })
+            .css({ color: "blue", "font": "10px DengXian", "-ms-user-select": "all", "user-select": "all" }));
+
+
+
+        // Game UI
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130 }).createText({ x: 10, y: 260, w: 300 })) // Loading Left User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 130, x: 700 }).createText({ x: 498, y: 260, w: 300 })) // Loading Right User
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, User').attr({ y: 270, x: 350 }).createText({ x: 250, y: 250, w: 300 })) // Loading center User
+        Crafty("User").get(0)._children[0].append("<div id='progress'><div id='progress2'></div></div>");
+        Crafty("User").get(1)._children[0].css("text-align", "right").append("<div id='progress' style='float: right;'><div id='progress2'></div></div>");
+        Crafty("User").get(2)._children[0].css("text-align", "center").append("<div id='progress' style='margin: auto;'><div id='progress2'></div></div>");
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 200, baseY: function() { return 200; } })) // Loading First Action
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 350, baseY: function() { return 350; }, baseX: function() { return 0; } })) // Loading Second Action
+        window.pages["misrocoft.com/work-online/errorer"].addEntity(Crafty.e('2D, DOM, Action').attr({ y: 350, x: 458, baseY: function() { return 350; }, baseX: function() { return 458; } })) // Loading last Action
+        Crafty("Action").get(0).x = 399 - (Crafty("Action").get(0).w / 2)
+        Crafty("Action").get(0).baseX = function() { return 399 - (Crafty("Action").get(0).w / 2) }
 
 
         // From Launching.

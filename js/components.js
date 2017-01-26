@@ -26,7 +26,7 @@ Crafty.c("User", {
         et.progress = 0;
         et.bind("EnterFrame", function() {
             if (this.visible) {
-                this.progress += 0.2 * (Math.random() * 3);
+                this.progress += 6 / Crafty.timer.FPS() * (Math.random() * 3);
                 if (this.progress <= 10 && this.progress > 0) {
                     this.css("opacity", Math.rnd(this.progress / 10, 3).toString());
                     this.owner.css("opacity", Math.rnd(this.progress / 10, 3).toString());
@@ -98,17 +98,17 @@ Crafty.c("Action", {
                     gain = 4;
                     Crafty.audio.play("critical")
                 } else {
-                    Crafty.audio.play("alert")
+                    Crafty.audio.play("alert", 0.5)
                 }
                 Crafty.trigger("GainCoin", { gain: gain });
             };
         })
         this.bind("EnterFrame", function() {
             if (this.redo > 100) { // Go not visible
-                this.redo -= 2;
+                this.redo -= 300 / Crafty.timer.FPS();
                 this.css("opacity", Math.rnd((this.redo - 100) / 100, 2).toString());
             } else if (this.redo > 0) {
-                this.redo -= 2;
+                this.redo -= 300 / Crafty.timer.FPS();
                 this.css("opacity", Math.rnd((100 - this.redo) / 100, 2).toString());
             }
             if (this.redo == 100) {
