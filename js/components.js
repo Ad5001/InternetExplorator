@@ -242,7 +242,7 @@ Page = function(title, url, icon, action, leave) {
         },
 
         leave: function() {
-            this._action();
+            this._leave();
             this.elements.forEach(function(ele) {
                 ele.visible = false;
             })
